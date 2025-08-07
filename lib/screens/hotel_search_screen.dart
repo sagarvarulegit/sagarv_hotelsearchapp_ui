@@ -2,11 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:hotel_search_app/screens/destination_selection_screen.dart';
 import 'package:hotel_search_app/screens/hotel_search_results_screen.dart';
 import 'package:hotel_search_app/services/api_service.dart';
+import 'package:hotel_search_app/utils/animations.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class HotelSearchScreen extends StatefulWidget {
-  const HotelSearchScreen({Key? key}) : super(key: key);
+  final Function(bool) onThemeChanged;
+  final bool isDarkMode;
+
+  const HotelSearchScreen({
+    Key? key,
+    required this.onThemeChanged,
+    required this.isDarkMode,
+  }) : super(key: key);
 
   @override
   State<HotelSearchScreen> createState() => _HotelSearchScreenState();
@@ -23,94 +31,219 @@ class _HotelSearchScreenState extends State<HotelSearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hotel Search'),
+        title: const Text('Find Your Stay'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(widget.isDarkMode ? Icons.light_mode : Icons.dark_mode),
+            onPressed: () => widget.onThemeChanged(!widget.isDarkMode),
+            tooltip: 'Toggle theme',
+          ),
+        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Hotel image banner
-            Container(
-              height: 200,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                image: const DecorationImage(
-                  image: NetworkImage('https://images.unsplash.com/photo-1566073771259-6a8506099945'),
-                  fit: BoxFit.cover,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Hero image with gradient overlay
+              Hero(
+                tag: 'hotel-banner',
+                child: Container(
+                  height: 240,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    image: const DecorationImage(
+                      image: NetworkImage('https://images.unsplash.com/photo-1566073771259-6a8506099945'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.7),
+                        ],
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Discover Amazing Hotels',
+                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Find the perfect stay for your next adventure',
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: Colors.white.withOpacity(0.9),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
-            
-            // Where To field
-            TextField(
-              readOnly: true,
-              controller: TextEditingController(text: _selectedDestination),
-              decoration: InputDecoration(
-                labelText: 'Where To',
-                hintText: 'Select destination',
-                prefixIcon: const Icon(Icons.location_on),
-                suffixIcon: const Icon(Icons.arrow_drop_down),
-              ),
-              onTap: () async {
-                final selected = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const DestinationSelectionScreen(),
+              const SizedBox(height: 32),
+              
+              // Search form card
+              Card(
+                elevation: 4,
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Search Hotels',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      
+                      // Destination field
+                      InkWell(
+                        onTap: () async {
+                          final selected = await Navigator.push(
+                            context,
+                            AppAnimations.slideTransition(const DestinationSelectionScreen()),
+                          );
+                          if (selected != null) {
+                            setState(() {
+                              _selectedDestination = selected;
+                            });
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(12),
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: 'Where to?',
+                            prefixIcon: const Icon(Icons.location_on_outlined),
+                            suffixIcon: const Icon(Icons.chevron_right),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            _selectedDestination.isEmpty ? 'Select destination' : _selectedDestination,
+                            style: TextStyle(
+                              color: _selectedDestination.isEmpty 
+                                  ? Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6)
+                                  : Theme.of(context).textTheme.bodyMedium?.color,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Date range field
+                      const SizedBox(height: 16),
+                      InkWell(
+                        onTap: () => _showDateRangePicker(context),
+                        borderRadius: BorderRadius.circular(12),
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: 'When',
+                            prefixIcon: const Icon(Icons.calendar_today_outlined),
+                            suffixIcon: const Icon(Icons.chevron_right),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            _fromDate != null && _toDate != null
+                                ? '${DateFormat('MMM d').format(_fromDate!)} - ${DateFormat('MMM d, yyyy').format(_toDate!)}'
+                                : 'Select dates',
+                            style: TextStyle(
+                              color: _fromDate != null
+                                  ? Theme.of(context).textTheme.bodyMedium?.color
+                                  : Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      // Search button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 56,
+                        child: ElevatedButton.icon(
+                          onPressed: _selectedDestination.isNotEmpty && _fromDate != null && _toDate != null
+                              ? _searchHotels
+                              : null,
+                          icon: _isLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  ),
+                                )
+                              : const Icon(Icons.search, size: 20),
+                          label: _isLoading
+                              ? const Text('Searching...')
+                              : const Text('Search Hotels'),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                );
-                if (selected != null) {
-                  setState(() {
-                    _selectedDestination = selected;
-                  });
-                }
-              },
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // When field
-            TextField(
-              readOnly: true,
-              controller: TextEditingController(
-                text: _fromDate != null && _toDate != null
-                  ? '${DateFormat('MMM d, yyyy').format(_fromDate!)} - ${DateFormat('MMM d, yyyy').format(_toDate!)}'
-                  : '',
+                ),
               ),
-              decoration: InputDecoration(
-                labelText: 'When',
-                hintText: 'Select dates',
-                prefixIcon: const Icon(Icons.calendar_today),
-                suffixIcon: const Icon(Icons.arrow_drop_down),
+
+              const SizedBox(height: 24),
+
+              // Popular destinations section
+              Text(
+                'Popular Destinations',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              onTap: () {
-                _showDateRangePicker(context);
-              },
-            ),
-            
-            const SizedBox(height: 24),
-            
-            // Search button
-            ElevatedButton(
-              onPressed: _selectedDestination.isNotEmpty && _fromDate != null && _toDate != null
-                ? _searchHotels
-                : null,
-              child: _isLoading
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(color: Colors.white),
-                  )
-                : const Text('SEARCH'),
-            ),
-          ],
+              const SizedBox(height: 16),
+
+              SizedBox(
+                height: 120,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    _buildDestinationCard('Paris', 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=300'),
+                    _buildDestinationCard('Tokyo', 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=300'),
+                    _buildDestinationCard('New York', 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=300'),
+                    _buildDestinationCard('Dubai', 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=300'),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
-  
+
   void _showDateRangePicker(BuildContext context) {
     DateTime? selectedFromDate = _fromDate;
     DateTime? selectedToDate = _toDate;
@@ -233,5 +366,63 @@ class _HotelSearchScreenState extends State<HotelSearchScreen> {
         });
       }
     }
+  }
+
+  Widget _buildDestinationCard(String destination, String imageUrl) {
+    return Container(
+      width: 200,
+      margin: const EdgeInsets.only(right: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Stack(
+          children: [
+            Container(
+              height: 120,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage(imageUrl),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Container(
+              height: 120,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withOpacity(0.7),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 12,
+              left: 12,
+              child: Text(
+                destination,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
