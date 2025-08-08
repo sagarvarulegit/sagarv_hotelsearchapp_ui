@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hotel_search_app/models/hotel.dart';
 import 'package:hotel_search_app/utils/animations.dart';
+import 'package:hotel_search_app/utils/hotel_images.dart';
 
 class HotelSearchResultsScreen extends StatelessWidget {
   final List<Hotel> hotels;
@@ -95,7 +96,8 @@ class HotelSearchResultsScreen extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
                 child: CachedNetworkImage(
-                  imageUrl: hotel.imageUrl,
+                  // Use HotelImageProvider to get a reliable image URL based on hotel ID
+                  imageUrl: HotelImageProvider.getHotelImageUrl(hotel.id),
                   height: 180,
                   width: double.infinity,
                   fit: BoxFit.cover,
