@@ -20,11 +20,9 @@ class AppTheme {
     onError: Color(0xFFFFFFFF),
     errorContainer: Color(0xFFFFDAD6),
     onErrorContainer: Color(0xFF410002),
-    background: Color(0xFFF8F9FF),
-    onBackground: Color(0xFF191C20),
     surface: Color(0xFFF8F9FF),
     onSurface: Color(0xFF191C20),
-    surfaceVariant: Color(0xFFE0E2EC),
+    surfaceContainerHighest: Color(0xFFE0E2EC),
     onSurfaceVariant: Color(0xFF43474E),
     outline: Color(0xFF74777F),
     outlineVariant: Color(0xFFC4C6CF),
@@ -53,11 +51,9 @@ class AppTheme {
     onError: Color(0xFF690005),
     errorContainer: Color(0xFF93000A),
     onErrorContainer: Color(0xFFFFDAD6),
-    background: Color(0xFF191C20),
-    onBackground: Color(0xFFE2E2E9),
     surface: Color(0xFF191C20),
     onSurface: Color(0xFFE2E2E9),
-    surfaceVariant: Color(0xFF43474E),
+    surfaceContainerHighest: Color(0xFF43474E),
     onSurfaceVariant: Color(0xFFC4C6CF),
     outline: Color(0xFF8D9199),
     outlineVariant: Color(0xFF43474E),
@@ -227,7 +223,7 @@ class AppTheme {
   static InputDecorationTheme _buildInputDecorationTheme(ColorScheme colorScheme) {
     return InputDecorationTheme(
       filled: true,
-      fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
+      fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.3),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(color: colorScheme.outline),
@@ -287,7 +283,7 @@ class AppTheme {
       outlinedButtonTheme: _buildOutlinedButtonTheme(lightColorScheme),
       inputDecorationTheme: _buildInputDecorationTheme(lightColorScheme),
       bottomNavigationBarTheme: _buildBottomNavigationBarTheme(lightColorScheme),
-      scaffoldBackgroundColor: lightColorScheme.background,
+      scaffoldBackgroundColor: lightColorScheme.surface,
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: lightColorScheme.primary,
         foregroundColor: lightColorScheme.onPrimary,
@@ -315,7 +311,7 @@ class AppTheme {
       outlinedButtonTheme: _buildOutlinedButtonTheme(darkColorScheme),
       inputDecorationTheme: _buildInputDecorationTheme(darkColorScheme),
       bottomNavigationBarTheme: _buildBottomNavigationBarTheme(darkColorScheme),
-      scaffoldBackgroundColor: darkColorScheme.background,
+      scaffoldBackgroundColor: darkColorScheme.surface,
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: darkColorScheme.primary,
         foregroundColor: darkColorScheme.onPrimary,

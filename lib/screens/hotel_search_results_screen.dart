@@ -101,14 +101,14 @@ class HotelSearchResultsScreen extends StatelessWidget {
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Container(
                     height: 180,
-                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     child: const Center(
                       child: CircularProgressIndicator(strokeWidth: 2),
                     ),
                   ),
                   errorWidget: (context, url, error) => Container(
                     height: 180,
-                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     child: Icon(
                       Icons.hotel_outlined,
                       size: 48,

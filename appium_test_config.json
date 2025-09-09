@@ -1,0 +1,24 @@
+{
+  "platformName": "Android",
+  "platformVersion": "11.0",
+  "deviceName": "Android Emulator",
+  "app": "./build/app/outputs/flutter-apk/app-debug.apk",
+  "appPackage": "com.example.hotel_search_app",
+  "appActivity": ".MainActivity",
+  "automationName": "UiAutomator2",
+  "newCommandTimeout": 300,
+  "noReset": false,
+  "fullReset": false,
+  "unicodeKeyboard": true,
+  "resetKeyboard": true,
+  "systemPort": 8201,
+  "chromeDriverPort": 9516,
+  "settings": {
+    "waitForIdleTimeout": 100,
+    "waitForSelectorTimeout": 5000
+  },
+  "capabilities": {
+    "flutter:enableImpersonation": true,
+    "flutter:waitForFirstFrame": true
+  }
+}
