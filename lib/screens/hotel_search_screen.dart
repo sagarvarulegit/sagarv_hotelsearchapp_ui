@@ -34,10 +34,15 @@ class _HotelSearchScreenState extends State<HotelSearchScreen> {
         title: const Text('Find Your Stay'),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: Icon(widget.isDarkMode ? Icons.light_mode : Icons.dark_mode),
-            onPressed: () => widget.onThemeChanged(!widget.isDarkMode),
-            tooltip: 'Toggle theme',
+          Semantics(
+            label: 'Toggle theme mode',
+            identifier: 'theme_toggle_btn',
+            child: IconButton(
+              key: const ValueKey('theme_toggle_btn'),
+              icon: Icon(widget.isDarkMode ? Icons.light_mode : Icons.dark_mode),
+              onPressed: () => widget.onThemeChanged(!widget.isDarkMode),
+              tooltip: 'Toggle theme',
+            ),
           ),
         ],
       ),
@@ -116,34 +121,39 @@ class _HotelSearchScreenState extends State<HotelSearchScreen> {
                       const SizedBox(height: 24),
                       
                       // Destination field
-                      InkWell(
-                        onTap: () async {
-                          final selected = await Navigator.push(
-                            context,
-                            AppAnimations.slideTransition(const DestinationSelectionScreen()),
-                          );
-                          if (selected != null) {
-                            setState(() {
-                              _selectedDestination = selected;
-                            });
-                          }
-                        },
-                        borderRadius: BorderRadius.circular(12),
-                        child: InputDecorator(
-                          decoration: InputDecoration(
-                            labelText: 'Where to?',
-                            prefixIcon: const Icon(Icons.location_on_outlined),
-                            suffixIcon: const Icon(Icons.chevron_right),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                      Semantics(
+                        label: 'Select destination for hotel search',
+                        identifier: 'destination_selector',
+                        child: InkWell(
+                          key: const ValueKey('destination_selector'),
+                          onTap: () async {
+                            final selected = await Navigator.push(
+                              context,
+                              AppAnimations.slideTransition(const DestinationSelectionScreen()),
+                            );
+                            if (selected != null) {
+                              setState(() {
+                                _selectedDestination = selected;
+                              });
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(12),
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: 'Where to?',
+                              prefixIcon: const Icon(Icons.location_on_outlined),
+                              suffixIcon: const Icon(Icons.chevron_right),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            _selectedDestination.isEmpty ? 'Select destination' : _selectedDestination,
-                            style: TextStyle(
-                              color: _selectedDestination.isEmpty 
-                                  ? Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6)
-                                  : Theme.of(context).textTheme.bodyMedium?.color,
+                            child: Text(
+                              _selectedDestination.isEmpty ? 'Select destination' : _selectedDestination,
+                              style: TextStyle(
+                                color: _selectedDestination.isEmpty 
+                                    ? Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6)
+                                    : Theme.of(context).textTheme.bodyMedium?.color,
+                              ),
                             ),
                           ),
                         ),
@@ -153,26 +163,31 @@ class _HotelSearchScreenState extends State<HotelSearchScreen> {
 
                       // Date range field
                       const SizedBox(height: 16),
-                      InkWell(
-                        onTap: () => _showDateRangePicker(context),
-                        borderRadius: BorderRadius.circular(12),
-                        child: InputDecorator(
-                          decoration: InputDecoration(
-                            labelText: 'When',
-                            prefixIcon: const Icon(Icons.calendar_today_outlined),
-                            suffixIcon: const Icon(Icons.chevron_right),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                      Semantics(
+                        label: 'Select check-in and check-out dates',
+                        identifier: 'date_range_selector',
+                        child: InkWell(
+                          key: const ValueKey('date_range_selector'),
+                          onTap: () => _showDateRangePicker(context),
+                          borderRadius: BorderRadius.circular(12),
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: 'When',
+                              prefixIcon: const Icon(Icons.calendar_today_outlined),
+                              suffixIcon: const Icon(Icons.chevron_right),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            _fromDate != null && _toDate != null
-                                ? '${DateFormat('MMM d').format(_fromDate!)} - ${DateFormat('MMM d, yyyy').format(_toDate!)}'
-                                : 'Select dates',
-                            style: TextStyle(
-                              color: _fromDate != null
-                                  ? Theme.of(context).textTheme.bodyMedium?.color
-                                  : Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
+                            child: Text(
+                              _fromDate != null && _toDate != null
+                                  ? '${DateFormat('MMM d').format(_fromDate!)} - ${DateFormat('MMM d, yyyy').format(_toDate!)}'
+                                  : 'Select dates',
+                              style: TextStyle(
+                                color: _fromDate != null
+                                    ? Theme.of(context).textTheme.bodyMedium?.color
+                                    : Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
+                              ),
                             ),
                           ),
                         ),
@@ -184,27 +199,32 @@ class _HotelSearchScreenState extends State<HotelSearchScreen> {
                       SizedBox(
                         width: double.infinity,
                         height: 56,
-                        child: ElevatedButton.icon(
-                          onPressed: _selectedDestination.isNotEmpty && _fromDate != null && _toDate != null
-                              ? _searchHotels
-                              : null,
-                          icon: _isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                  ),
-                                )
-                              : const Icon(Icons.search, size: 20),
-                          label: _isLoading
-                              ? const Text('Searching...')
-                              : const Text('Search Hotels'),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                        child: Semantics(
+                          label: 'Search for hotels',
+                          identifier: 'search_hotels_btn',
+                          child: ElevatedButton.icon(
+                            key: const ValueKey('search_hotels_btn'),
+                            onPressed: _selectedDestination.isNotEmpty && _fromDate != null && _toDate != null
+                                ? _searchHotels
+                                : null,
+                            icon: _isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    ),
+                                  )
+                                : const Icon(Icons.search, size: 20),
+                            label: _isLoading
+                                ? const Text('Searching...')
+                                : const Text('Search Hotels'),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
                             ),
                           ),
                         ),
@@ -305,20 +325,30 @@ class _HotelSearchScreenState extends State<HotelSearchScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('Cancel'),
+                      Semantics(
+                        label: 'Cancel date selection',
+                        identifier: 'date_picker_cancel_btn',
+                        child: TextButton(
+                          key: const ValueKey('date_picker_cancel_btn'),
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Cancel'),
+                        ),
                       ),
-                      ElevatedButton(
-                        onPressed: selectedFromDate != null && selectedToDate != null
-                          ? () {
-                              _fromDate = selectedFromDate;
-                              _toDate = selectedToDate;
-                              Navigator.pop(context);
-                              this.setState(() {});
-                            }
-                          : null,
-                        child: const Text('Save'),
+                      Semantics(
+                        label: 'Save selected dates',
+                        identifier: 'date_picker_save_btn',
+                        child: ElevatedButton(
+                          key: const ValueKey('date_picker_save_btn'),
+                          onPressed: selectedFromDate != null && selectedToDate != null
+                            ? () {
+                                _fromDate = selectedFromDate;
+                                _toDate = selectedToDate;
+                                Navigator.pop(context);
+                                this.setState(() {});
+                              }
+                            : null,
+                          child: const Text('Save'),
+                        ),
                       ),
                     ],
                   ),
@@ -369,58 +399,70 @@ class _HotelSearchScreenState extends State<HotelSearchScreen> {
   }
 
   Widget _buildDestinationCard(String destination, String imageUrl) {
-    return Container(
-      width: 200,
-      margin: const EdgeInsets.only(right: 16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+    return Semantics(
+      label: 'Select $destination as destination',
+      identifier: 'popular_destination_${destination.toLowerCase().replaceAll(' ', '_')}',
+      child: GestureDetector(
+        key: ValueKey('popular_destination_${destination.toLowerCase().replaceAll(' ', '_')}'),
+        onTap: () {
+          setState(() {
+            _selectedDestination = destination;
+          });
+        },
+        child: Container(
+          width: 200,
+          margin: const EdgeInsets.only(right: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Stack(
-          children: [
-            Container(
-              height: 120,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(imageUrl),
-                  fit: BoxFit.cover,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Stack(
+              children: [
+                Container(
+                  height: 120,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(imageUrl),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Container(
-              height: 120,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black.withOpacity(0.7),
-                  ],
+                Container(
+                  height: 120,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.7),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Positioned(
-              bottom: 12,
-              left: 12,
-              child: Text(
-                destination,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                Positioned(
+                  bottom: 12,
+                  left: 12,
+                  child: Text(
+                    destination,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

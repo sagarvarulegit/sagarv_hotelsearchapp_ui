@@ -29,7 +29,7 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         
-        // Added support for x86 architecture for emulator compatibility
+        // Force include x86 for emulator compatibility
         ndk {
             abiFilters.add("x86")
             abiFilters.add("armeabi-v7a")

@@ -31,20 +31,25 @@ class _DestinationSelectionScreenState extends State<DestinationSelectionScreen>
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              decoration: InputDecoration(
-                labelText: 'Search',
-                hintText: 'Search for city',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+            child: Semantics(
+              label: 'Search for destination',
+              identifier: 'destination_search_field',
+              child: TextField(
+                key: const ValueKey('destination_search_field'),
+                decoration: InputDecoration(
+                  labelText: 'Search',
+                  hintText: 'Search for city',
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value.toLowerCase();
+                  });
+                },
               ),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value.toLowerCase();
-                });
-              },
             ),
           ),
           Expanded(
@@ -68,12 +73,17 @@ class _DestinationSelectionScreenState extends State<DestinationSelectionScreen>
                     separatorBuilder: (context, index) => const Divider(),
                     itemBuilder: (context, index) {
                       final destination = filteredDestinations[index];
-                      return ListTile(
-                        leading: const Icon(Icons.location_city),
-                        title: Text(destination.city),
-                        onTap: () {
-                          Navigator.pop(context, destination.city);
-                        },
+                      return Semantics(
+                        label: 'Select ${destination.city} as destination',
+                        identifier: 'destination_item_${destination.city.toLowerCase().replaceAll(' ', '_')}',
+                        child: ListTile(
+                          key: ValueKey('destination_${destination.city.toLowerCase().replaceAll(' ', '_')}'),
+                          leading: const Icon(Icons.location_city),
+                          title: Text(destination.city),
+                          onTap: () {
+                            Navigator.pop(context, destination.city);
+                          },
+                        ),
                       );
                     },
                   );

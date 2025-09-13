@@ -14,14 +14,24 @@ class HotelSearchResultsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Search Results'),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+        leading: Semantics(
+          label: 'Go back to search',
+          identifier: 'back_btn',
+          child: IconButton(
+            key: const ValueKey('back_btn'),
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context),
+          ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.filter_list),
-            onPressed: () => _showFilterBottomSheet(context),
+          Semantics(
+            label: 'Filter search results',
+            identifier: 'filter_btn',
+            child: IconButton(
+              key: const ValueKey('filter_btn'),
+              icon: const Icon(Icons.filter_list),
+              onPressed: () => _showFilterBottomSheet(context),
+            ),
           ),
         ],
       ),
@@ -83,10 +93,14 @@ class HotelSearchResultsScreen extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.0),
         ),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16.0),
-          onTap: () => _navigateToHotelDetails(hotel, context),
-          child: Column(
+        child: Semantics(
+          label: 'View details for ${hotel.name}',
+          identifier: 'hotel_card_${hotel.id}',
+          child: InkWell(
+            key: ValueKey('hotel_card_${hotel.id}'),
+            borderRadius: BorderRadius.circular(16.0),
+            onTap: () => _navigateToHotelDetails(hotel, context),
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
             // Hotel Image with Hero animation and shimmer loading
@@ -220,15 +234,25 @@ class HotelSearchResultsScreen extends StatelessWidget {
                       // Quick actions
                       Row(
                         children: [
-                          IconButton(
-                            icon: const Icon(Icons.favorite_border),
-                            onPressed: () => _toggleFavorite(hotel, context),
-                            tooltip: 'Add to favorites',
+                          Semantics(
+                            label: 'Add ${hotel.name} to favorites',
+                            identifier: 'favorite_btn_${hotel.id}',
+                            child: IconButton(
+                              key: ValueKey('favorite_btn_${hotel.id}'),
+                              icon: const Icon(Icons.favorite_border),
+                              onPressed: () => _toggleFavorite(hotel, context),
+                              tooltip: 'Add to favorites',
+                            ),
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.share_outlined),
-                            onPressed: () => _shareHotel(hotel, context),
-                            tooltip: 'Share',
+                          Semantics(
+                            label: 'Share ${hotel.name}',
+                            identifier: 'share_btn_${hotel.id}',
+                            child: IconButton(
+                              key: ValueKey('share_btn_${hotel.id}'),
+                              icon: const Icon(Icons.share_outlined),
+                              onPressed: () => _shareHotel(hotel, context),
+                              tooltip: 'Share',
+                            ),
                           ),
                         ],
                       ),
@@ -238,6 +262,7 @@ class HotelSearchResultsScreen extends StatelessWidget {
               ),
             ),
           ],
+          ),
         ),
       ),
     ));
@@ -285,20 +310,35 @@ class HotelSearchResultsScreen extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 16),
-              ListTile(
-                leading: const Icon(Icons.sort),
-                title: const Text('Sort by Price'),
-                onTap: () => Navigator.pop(context),
+              Semantics(
+                label: 'Sort hotels by price',
+                identifier: 'sort_by_price',
+                child: ListTile(
+                  key: const ValueKey('sort_by_price'),
+                  leading: const Icon(Icons.sort),
+                  title: const Text('Sort by Price'),
+                  onTap: () => Navigator.pop(context),
+                ),
               ),
-              ListTile(
-                leading: const Icon(Icons.star_outline),
-                title: const Text('Sort by Rating'),
-                onTap: () => Navigator.pop(context),
+              Semantics(
+                label: 'Sort hotels by rating',
+                identifier: 'sort_by_rating',
+                child: ListTile(
+                  key: const ValueKey('sort_by_rating'),
+                  leading: const Icon(Icons.star_outline),
+                  title: const Text('Sort by Rating'),
+                  onTap: () => Navigator.pop(context),
+                ),
               ),
-              ListTile(
-                leading: const Icon(Icons.location_on_outlined),
-                title: const Text('Sort by Distance'),
-                onTap: () => Navigator.pop(context),
+              Semantics(
+                label: 'Sort hotels by distance',
+                identifier: 'sort_by_distance',
+                child: ListTile(
+                  key: const ValueKey('sort_by_distance'),
+                  leading: const Icon(Icons.location_on_outlined),
+                  title: const Text('Sort by Distance'),
+                  onTap: () => Navigator.pop(context),
+                ),
               ),
             ],
           ),
