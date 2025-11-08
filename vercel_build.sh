@@ -11,6 +11,8 @@ if [ ! -d "$FLUTTER_DIR" ]; then
 fi
 
 export PATH="$FLUTTER_DIR/bin:$PATH"
+export FLUTTER_ROOT="$FLUTTER_DIR"
+git config --global --add safe.directory "$FLUTTER_DIR"
 flutter config --enable-web
 flutter pub get
 flutter build web --release
