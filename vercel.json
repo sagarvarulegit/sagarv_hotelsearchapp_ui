@@ -1,11 +1,9 @@
 {
   "builds": [
     {
-      "src": "pubspec.yaml",
-      "use": "@vercel/static-build",
+      "src": "build.sh",
+      "use": "@vercel/static",
       "config": {
-        "installCommand": "flutter pub get",
-        "buildCommand": "flutter build web --release",
         "outputDirectory": "build/web"
       }
     }
