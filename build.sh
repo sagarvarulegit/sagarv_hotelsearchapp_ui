@@ -14,5 +14,5 @@ flutter config --enable-web
 # Get project dependencies
 flutter pub get
 
-# Build the Flutter web application
-flutter build web --release
+# Build the Flutter web application with a specific base href
+flutter build web --release --base-href /
